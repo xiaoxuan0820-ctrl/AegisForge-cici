@@ -55,13 +55,24 @@ jobs:
           }
           PATCH
 
+      - name: 🔱 改名为 AegisPhone
+        working-directory: hermes-android
+        run: |
+          # 修改 App 名称为 AegisPhone
+          sed -i 's/<string name="app_name">ApkClaw<\/string>/<string name="app_name">AegisPhone<\/string>/g' \
+            app/src/main/res/values/strings.xml
+          # 同时改应用标签
+          sed -i 's/android:label="ApkClaw"/android:label="AegisPhone"/g' \
+            app/src/main/AndroidManifest.xml 2>/dev/null || true
+          echo "✅ App name changed to AegisPhone"
+
       - name: Build Debug APK
         working-directory: hermes-android
         run: ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g
 
-      - name: Upload Hermes APK
+      - name: Upload AegisPhone APK
         uses: actions/upload-artifact@v4
         with:
-          name: hermes-agent-phone-apk
+          name: aegisphone-apk
           path: hermes-android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
