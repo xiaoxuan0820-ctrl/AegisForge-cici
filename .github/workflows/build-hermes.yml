@@ -31,13 +31,22 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x hermes-android/gradlew
 
-      - name: Patch repositories for build compatibility
+      - name: Patch build config for CI
         working-directory: hermes-android
         run: |
-          # 添加 Google Maven 仓库作为阿里云镜像的备选
-          cat >> settings.gradle.kts << 'PATCH'
+          # 创建 dummy debug keystore 和 local.properties
+          keytool -genkey -v -keystore debug.keystore \
+            -alias androiddebugkey -keyalg RSA -keysize 2048 \
+            -validity 10000 -storepass android -keypass android \
+            -dname "CN=CI, OU=CI, O=CI, L=CI, S=CI, C=CI" 2>/dev/null
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "KEYSTORE_FILE=$(pwd)/debug.keystore" >> local.properties
+          echo "KEYSTORE_PASSWORD=android" >> local.properties
+          echo "KEY_ALIAS=androiddebugkey" >> local.properties
+          echo "KEY_PASSWORD=android" >> local.properties
 
-          // Patched repositories for CI
+          # 添加仓库备选
+          cat >> settings.gradle.kts << 'PATCH'
           dependencyResolutionManagement {
               repositories {
                   mavenCentral()
