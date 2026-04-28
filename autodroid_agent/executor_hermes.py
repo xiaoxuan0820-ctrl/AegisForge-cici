@@ -64,7 +64,7 @@ def execute_agent_task(task: str) -> dict:
     try:
         data = _api_call(
             "POST", "/api/agent/execute_task",
-            data={"task": task},
+            data={"prompt": task},
             timeout=120,
         )
         return data
