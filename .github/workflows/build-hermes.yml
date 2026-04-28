@@ -31,9 +31,24 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x hermes-android/gradlew
 
+      - name: Patch repositories for build compatibility
+        working-directory: hermes-android
+        run: |
+          # 添加 Google Maven 仓库作为阿里云镜像的备选
+          cat >> settings.gradle.kts << 'PATCH'
+
+          // Patched repositories for CI
+          dependencyResolutionManagement {
+              repositories {
+                  mavenCentral()
+                  google()
+              }
+          }
+          PATCH
+
       - name: Build Debug APK
         working-directory: hermes-android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g
 
       - name: Upload Hermes APK
         uses: actions/upload-artifact@v4
