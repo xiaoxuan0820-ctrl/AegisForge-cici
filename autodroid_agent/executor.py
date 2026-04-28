@@ -71,7 +71,8 @@ class ExecutionResult:
 
 def _adb_cmd(device_id: str = "") -> list[str]:
     """构造 ADB 命令前缀"""
-    cmd = ["adb"]
+    from autodroid_agent.config import ADB_PATH
+    cmd = [ADB_PATH]
     if device_id:
         cmd.extend(["-s", device_id])
     return cmd

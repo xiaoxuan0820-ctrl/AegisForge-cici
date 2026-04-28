@@ -11,6 +11,7 @@ OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
 
 # ==================== ADB 配置 ====================
+ADB_PATH = os.getenv("ADB_PATH", "/opt/homebrew/bin/adb")  # ADB 可执行文件路径
 ADB_HOST = os.getenv("ADB_HOST", "127.0.0.1")
 ADB_PORT = int(os.getenv("ADB_PORT", "5555"))
 ADB_DEVICE = os.getenv("ADB_DEVICE", "")  # 留空则使用唯一设备
