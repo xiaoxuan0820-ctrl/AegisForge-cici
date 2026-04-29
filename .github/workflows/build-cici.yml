@@ -177,3 +177,9 @@ jobs:
         working-directory: hermes-android
         run: |
           ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g 2>&1
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: cici-debug-apk
+          path: hermes-android/app/build/outputs/apk/debug/*.apk
