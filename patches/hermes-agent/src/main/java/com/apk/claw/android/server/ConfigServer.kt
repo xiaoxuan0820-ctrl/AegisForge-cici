@@ -611,14 +611,14 @@ loadAll();
         val active = Persona.getActive()
         val data = JsonObject().apply {
             addProperty("id", active.id)
-            addProperty("name", active.name)
+            addProperty("name", active.displayName)
             addProperty("description", active.description)
             addProperty("icon", active.icon)
             val list = JsonArray()
             Persona.values().forEach { p ->
                 list.add(JsonObject().apply {
                     addProperty("id", p.id)
-                    addProperty("name", p.name)
+                    addProperty("name", p.displayName)
                     addProperty("description", p.description)
                     addProperty("icon", p.icon)
                     addProperty("active", p == active)
@@ -667,7 +667,7 @@ loadAll();
         Persona.setActive(persona)
         return corsResponse(
             newFixedLengthResponse(Response.Status.OK, MIME_JSON,
-                """{"code":0,"message":"switched to ${persona.name}"}"""
+                """{"code":0,"message":"switched to ${persona.displayName}"}"""
             )
         )
     }

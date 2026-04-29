@@ -347,7 +347,7 @@ class SwitchPersonaTool : BaseTool() {
         Persona.setActive(persona)
 
         return ToolResult.success(
-            "✅ 已切换人格：${oldPersona.icon} ${oldPersona.name} → ${persona.icon} ${persona.name}\n" +
+            "✅ 已切换人格：${oldPersona.icon} ${oldPersona.displayName} → ${persona.icon} ${persona.displayName}\n" +
             "${persona.description}\n" +
             "下次任务执行时将使用新的人格风格。"
         )

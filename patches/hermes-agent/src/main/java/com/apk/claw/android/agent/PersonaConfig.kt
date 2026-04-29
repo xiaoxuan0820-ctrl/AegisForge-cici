@@ -10,7 +10,7 @@ import com.apk.claw.android.utils.KVUtils
  */
 enum class Persona(
     val id: String,
-    override val name: String,
+    val displayName: String,
     val description: String,
     val icon: String
 ) {
@@ -38,7 +38,7 @@ enum class Persona(
             val active = getActive()
             values().forEach { p ->
                 val marker = if (p == active) " ✅" else ""
-                sb.append("${p.icon} ${p.name}$marker\n")
+                sb.append("${p.icon} ${p.displayName}$marker\n")
                 sb.append("  ${p.description}\n")
             }
             sb.append("\n发送「切换到XX人格」即可切换，如「切换到办公搭子」")

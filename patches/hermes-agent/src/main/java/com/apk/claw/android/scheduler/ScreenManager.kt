@@ -154,7 +154,7 @@ object ScreenManager {
             val km = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
                 // Android 8.1+ 使用 dismissKeyguard (需要权限)
-                val activity = ActivityUtils.getActivity() ?: return
+                val activity = ActivityUtils.getTopActivity() ?: return
                 km.requestDismissKeyguard(
                     activity,
                     object : KeyguardManager.KeyguardDismissCallback() {
