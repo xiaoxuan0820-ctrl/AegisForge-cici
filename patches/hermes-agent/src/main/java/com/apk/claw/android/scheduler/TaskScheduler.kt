@@ -69,6 +69,11 @@ object TaskScheduler {
         val lastResult: ExecutionResult? = null,  // ★ 上次执行结果
         val createdAt: Long = System.currentTimeMillis()
     ) {
+        /** 兼容旧版：获取第一个时间槽的小时 */
+        val hour: Int get() = timeSlots.firstOrNull()?.hour ?: 0
+        /** 兼容旧版：获取第一个时间槽的分钟 */
+        val minute: Int get() = timeSlots.firstOrNull()?.minute ?: 0
+
         /** 获取格式化的时间列表 */
         fun getTimeString(): String =
             timeSlots.joinToString(", ") { it.toTimeString() }
