@@ -4,6 +4,7 @@ import android.content.Context
 import com.apk.claw.android.BuildConfig
 import com.apk.claw.android.agent.Persona
 import com.apk.claw.android.channel.ChannelManager
+import com.apk.claw.android.memory.MemoryManager
 import com.apk.claw.android.skill.SkillManager
 import com.apk.claw.android.skill.SkillManager.Skill
 import com.apk.claw.android.tool.ToolRegistry
@@ -57,6 +58,9 @@ class ConfigServer(
                 uri == "/api/persona" && method == Method.GET -> handleGetPersona()
                 uri == "/api/persona" && method == Method.POST -> handleSetPersona(session)
                 uri == "/api/skills/builtin" && method == Method.GET -> handleGetBuiltinSkills()
+                uri == "/api/memory" && method == Method.GET -> handleGetMemories(session)
+                uri == "/api/memory" && method == Method.POST -> handleSaveMemory(session)
+                uri == "/api/memory/delete" && method == Method.POST -> handleDeleteMemory(session)
                 uri == "/debug.html" && method == Method.GET && BuildConfig.DEBUG -> serveDebugHtml()
                 uri == "/api/debug/tools" && method == Method.GET && BuildConfig.DEBUG -> handleGetTools()
                 uri == "/api/debug/execute" && method == Method.POST && BuildConfig.DEBUG -> handleExecuteTool(session)
@@ -697,6 +701,109 @@ loadAll();
             }
             add("steps", steps)
         }
+    }
+
+    // ==================== 记忆 API ====================
+
+    private fun handleGetMemories(session: IHTTPSession): Response {
+        val query = session.parms["query"]?.takeIf { it.isNotBlank() }
+        val category = session.parms["category"]
+        val memories = when {
+            query != null -> MemoryManager.search(query)
+            category != null -> {
+                val cat = MemoryManager.Category.entries.find {
+                    it.key == category || it.name.equals(category, ignoreCase = true)
+                }
+                if (cat != null) MemoryManager.getAll().filter { it.category == cat }
+                else MemoryManager.getAll()
+            }
+            else -> MemoryManager.getAll()
+        }
+        val arr = JsonArray()
+        for (m in memories) {
+            arr.add(JsonObject().apply {
+                addProperty("id", m.id)
+                addProperty("category", m.category.name)
+                addProperty("categoryLabel", m.category.label)
+                addProperty("key", m.key)
+                addProperty("value", m.value)
+                addProperty("appName", m.appName)
+                val tags = JsonArray()
+                m.tags.forEach { tags.add(it) }
+                add("tags", tags)
+                addProperty("createdAt", m.createdAt)
+                addProperty("updatedAt", m.updatedAt)
+            })
+        }
+        return corsResponse(
+            newFixedLengthResponse(Response.Status.OK, MIME_JSON,
+                JsonObject().apply {
+                    addProperty("code", 0)
+                    add("data", arr)
+                    addProperty("total", memories.size)
+                }.toString()
+            )
+        )
+    }
+
+    private fun handleSaveMemory(session: IHTTPSession): Response {
+        val files = mutableMapOf<String, String>()
+        session.parseBody(files)
+        val body = files["postData"] ?: ""
+        val json = try {
+            gson.fromJson(body, JsonObject::class.java)
+        } catch (e: Exception) {
+            return corsResponse(
+                newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_JSON,
+                    """{"code":-1,"message":"invalid json"}""")
+            )
+        }
+        val key = json.get("key")?.asString ?: ""
+        val value = json.get("value")?.asString ?: ""
+        val categoryStr = json.get("category")?.asString ?: "FACT"
+        val category = MemoryManager.Category.entries.find {
+            it.key == categoryStr || it.name.equals(categoryStr, ignoreCase = true)
+        } ?: MemoryManager.Category.FACT
+        val appName = json.get("appName")?.asString
+        val tags = json.getAsJsonArray("tags")?.map { it.asString } ?: emptyList()
+        val item = MemoryManager.save(category, key, value, appName, tags)
+        return corsResponse(
+            newFixedLengthResponse(Response.Status.OK, MIME_JSON,
+                JsonObject().apply {
+                    addProperty("code", 0)
+                    addProperty("message", "saved")
+                    add("data", JsonObject().apply {
+                        addProperty("id", item.id)
+                        addProperty("category", item.category.name)
+                        addProperty("key", item.key)
+                        addProperty("value", item.value)
+                    })
+                }.toString()
+            )
+        )
+    }
+
+    private fun handleDeleteMemory(session: IHTTPSession): Response {
+        val files = mutableMapOf<String, String>()
+        session.parseBody(files)
+        val body = files["postData"] ?: ""
+        val json = try {
+            gson.fromJson(body, JsonObject::class.java)
+        } catch (e: Exception) {
+            return corsResponse(
+                newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_JSON,
+                    """{"code":-1,"message":"invalid json"}""")
+            )
+        }
+        val id = json.get("id")?.asString ?: return corsResponse(
+            newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_JSON,
+                """{"code":-1,"message":"missing id"}""")
+        )
+        val ok = MemoryManager.delete(id)
+        return corsResponse(
+            newFixedLengthResponse(Response.Status.OK, MIME_JSON,
+                """{"code":${if (ok) 0 else -1},"message":${if (ok) "\"deleted\"" else "\"not found\""}}""")
+        )
     }
 
     // ==================== Debug (仅 DEBUG 构建) ====================

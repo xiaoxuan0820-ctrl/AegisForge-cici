@@ -245,6 +245,48 @@ input:focus {
   color: #aeaeb2;
   font-size: 13px;
 }
+/* Memory */
+.memory-card .dot { background: #FF6B6B !important; }
+.memory-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1.5px solid #f0f0f5;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.memory-cat {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.memory-cat.profile { background: #E8F5E9; color: #2E7D32; }
+.memory-cat.pref { background: #F3E5F5; color: #7B1FA2; }
+.memory-cat.app { background: #E3F2FD; color: #1565C0; }
+.memory-cat.fact { background: #FFF3E0; color: #E65100; }
+.memory-cat.cred { background: #FFEBEE; color: #C62828; }
+.memory-body { flex: 1; min-width: 0; }
+.memory-key { font-weight: 600; color: #1d1d1f; }
+.memory-val { color: #86868b; margin-top: 1px; }
+.memory-del {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #ffe5e5;
+  color: #FF3B30;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.memory-del:hover { background: #FF3B30; color: #fff; }
 .builtin-label {
   font-size: 12px;
   font-weight: 600;
@@ -347,6 +389,17 @@ input:focus {
       <div class="card-title"><span class="dot"></span>🛠 技能 <span style="font-size:12px;color:#86868b;font-weight:400;margin-left:4px;">(<span id="skillCount">0</span>)</span></div>
       <div class="skill-list" id="installedSkills"></div>
       <div id="builtinSkills"></div>
+    </div>
+
+    <!-- Memory -->
+    <div class="card memory-card">
+      <div class="card-title"><span class="dot" style="background:#FF6B6B"></span>🧠 记忆 <span style="font-size:12px;color:#86868b;font-weight:400;margin-left:4px;">(<span id="memCount">0</span>)</span></div>
+      <div style="margin-bottom:8px;">
+        <input type="text" id="memSearch" placeholder="搜索记忆..." style="width:100%;padding:8px 12px;border:1.5px solid #e5e5ea;border-radius:8px;font-size:13px;" oninput="loadMemories()">
+      </div>
+      <div class="memory-list" id="memoryList">
+        <div class="empty-skills">暂无记忆</div>
+      </div>
     </div>
 
     <!-- Channels -->
@@ -750,10 +803,66 @@ async function deleteSkill(id, name) {
   }
 }
 
+// ====== Memory ======
+async function loadMemories() {
+  const q = document.getElementById('memSearch').value;
+  try {
+    const url = q ? '/api/memory?query=' + encodeURIComponent(q) : '/api/memory';
+    const res = await fetch(url);
+    const json = await res.json();
+    if (json.code === 0) {
+      const memories = json.data || [];
+      document.getElementById('memCount').textContent = json.total || memories.length;
+      renderMemories(memories);
+    }
+  } catch (e) { /* ignore */ }
+}
+
+function renderMemories(memories) {
+  const el = document.getElementById('memoryList');
+  if (!memories.length) {
+    el.innerHTML = '<div class="empty-skills">暂无记忆</div>';
+    return;
+  }
+  const catMap = { USER_PROFILE:'profile', PREFERENCE:'pref', APP_CONTEXT:'app', FACT:'fact', CREDENTIAL:'cred' };
+  el.innerHTML = memories.map(m => {
+    const cssClass = catMap[m.category] || 'fact';
+    return '<div class="memory-item">'
+      + '<span class="memory-cat ' + cssClass + '">' + (m.categoryLabel || m.category) + '</span>'
+      + '<div class="memory-body">'
+      + '<div class="memory-key">' + escHtml(m.key) + '</div>'
+      + '<div class="memory-val">' + escHtml(m.value) + '</div>'
+      + '</div>'
+      + '<button class="memory-del" onclick="deleteMemory(\'' + m.id + '\')" title="删除">✕</button>'
+      + '</div>';
+  }).join('');
+}
+
+async function deleteMemory(id) {
+  try {
+    const res = await fetch('/api/memory/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    const json = await res.json();
+    if (json.code === 0) {
+      showToast('已删除', 'success');
+      loadMemories();
+    }
+  } catch (e) { showToast('❌ ' + e.message, 'error'); }
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
 // ====== API ======
 async function load() {
   try {
-    await Promise.all([loadPersona(), loadSkills()]);
+    await Promise.all([loadPersona(), loadSkills(), loadMemories()]);
     const [chanRes, llmRes] = await Promise.all([fetch('/api/channels'), fetch('/api/llm')]);
     const chanJson = await chanRes.json();
     const llmJson = await llmRes.json();
