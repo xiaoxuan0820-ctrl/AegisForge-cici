@@ -1,10 +1,15 @@
 .env
 __pycache__/
 *.pyc
+.venv/
 logs/*
 screenshots/*
 !logs/.gitkeep
 !screenshots/.gitkeep
 .DS_Store
 *.apk
+*.zip
 autodroid-apk/
+hermes-apk/
+aegisphone-apk/
+autodroid_agent/
