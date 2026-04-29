@@ -108,6 +108,8 @@ jobs:
             hermes-android/app/src/main/java/com/apk/claw/android/agent/PersonaConfig.kt
           cp "${{ github.workspace }}/patches/hermes-agent/src/main/java/com/apk/claw/android/server/ConfigServer.kt" \
             hermes-android/app/src/main/java/com/apk/claw/android/server/ConfigServer.kt
+          cp "${{ github.workspace }}/patches/hermes-agent/assets/web/index.html" \
+            hermes-android/app/src/main/assets/web/index.html
           echo "✅ Skill system + Persona + ConfigServer applied"
 
       - name: Set up JDK 17
