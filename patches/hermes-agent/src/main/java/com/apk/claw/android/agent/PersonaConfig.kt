@@ -10,7 +10,7 @@ import com.apk.claw.android.utils.KVUtils
  */
 enum class Persona(
     val id: String,
-    val name: String,
+    override val name: String,
     val description: String,
     val icon: String
 ) {

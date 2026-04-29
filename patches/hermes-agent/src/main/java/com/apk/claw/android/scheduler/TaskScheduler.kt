@@ -413,7 +413,7 @@ object TaskScheduler {
         } else {
             // 重试耗尽，标记最终失败
             retryCounts.remove(key)
-            recordResult(task.id, false, "重试$MAX_RETRIES次后仍然失败: $reason")
+            recordResult(task.id, false, "重试${MAX_RETRIES}次后仍然失败: $reason")
         }
     }
 

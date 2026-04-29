@@ -7,6 +7,7 @@ import android.os.PowerManager
 import android.view.WindowManager
 import com.apk.claw.android.ClawApplication
 import com.apk.claw.android.utils.XLog
+import com.blankj.utilcode.util.ActivityUtils
 
 /**
  * 屏幕管理器
@@ -153,9 +154,10 @@ object ScreenManager {
             val km = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
                 // Android 8.1+ 使用 dismissKeyguard (需要权限)
+                val activity = ActivityUtils.getActivity() ?: return
                 km.requestDismissKeyguard(
-                    ClawApplication.instance.getActivity() ?: return,
-                    object : KeyguardManager.KeyguardDismissCallback {
+                    activity,
+                    object : KeyguardManager.KeyguardDismissCallback() {
                         override fun onDismissSucceeded() {
                             XLog.i(TAG, "🔓 锁屏已解除")
                         }
@@ -164,10 +166,6 @@ object ScreenManager {
                         }
                     }
                 )
-            } else {
-                // 旧版本使用已废弃的方法
-                @Suppress("DEPRECATION")
-                km.disableKeyguard()
             }
         } catch (e: Exception) {
             XLog.w(TAG, "解锁失败（可能设置了密码锁）: ${e.message}")

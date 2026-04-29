@@ -13,6 +13,8 @@ import com.apk.claw.android.utils.XLog
  */
 class SaveMemoryTool : BaseTool() {
 
+    private val TAG = "SaveMemoryTool"
+
     override fun getName(): String = "save_memory"
 
     override fun getParameters(): List<ToolParameter> = listOf(
