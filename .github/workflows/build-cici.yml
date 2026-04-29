@@ -158,11 +158,27 @@ jobs:
           echo "🎨 生成 CiCi 图标..."
           python3 "${{ github.workspace }}/scripts/generate_icons.py"
 
+      - name: Compile Kotlin (debug errors first)
+        working-directory: hermes-android
+        run: |
+          echo "=== Running Kotlin compilation ==="
+          ./gradlew :app:compileDebugKotlin --no-daemon -Dorg.gradle.jvmargs=-Xmx4g 2>&1 | tee /tmp/kotlin_output.txt
+          if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo "=== KOTLIN COMPILATION FAILED ==="
+            grep -i "error:" /tmp/kotlin_output.txt | head -50
+            exit 1
+          fi
+          echo "=== Kotlin compilation OK ==="
+
       - name: Build Debug APK
         working-directory: hermes-android
         run: |
-          ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g 2>&1 | tail -100
-          exit ${PIPESTATUS[0]}
+          ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g 2>&1 | tee /tmp/build_output.txt
+          if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo "=== BUILD FAILED ==="
+            grep -i "error:" /tmp/build_output.txt | head -50
+            exit 1
+          fi
 
       - name: Upload CiCi APK
         uses: actions/upload-artifact@v4
