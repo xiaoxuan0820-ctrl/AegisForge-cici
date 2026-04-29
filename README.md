@@ -56,7 +56,7 @@
 
 ### 1. 下载安装
 
-从 [GitHub Actions](https://github.com/xiaoxuan0820-ctrl/AegisForge/actions) 最新构建的 Artifacts 下载 `cici-debug-apk`，解压后安装到闲置 Android 手机。
+从 [GitHub Releases](https://github.com/xiaoxuan0820-ctrl/AegisForge/releases) 下载最新 `cici-debug.apk`，安装到闲置 Android 手机。
 
 > 需要 Android 8.0+ (API ≥ 26)
 

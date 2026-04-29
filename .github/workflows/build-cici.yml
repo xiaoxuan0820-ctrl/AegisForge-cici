@@ -180,8 +180,17 @@ jobs:
         run: |
           ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g 2>&1
 
+      - name: Rename APK to cici-debug.apk
+        working-directory: hermes-android
+        run: |
+          APK_DIR=app/build/outputs/apk/debug
+          for f in "$APK_DIR"/*.apk; do
+            cp "$f" "$APK_DIR/cici-debug.apk"
+            echo "✅ Renamed $(basename "$f") → cici-debug.apk"
+          done
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: cici-debug-apk
-          path: hermes-android/app/build/outputs/apk/debug/*.apk
+          path: hermes-android/app/build/outputs/apk/debug/cici-debug.apk
