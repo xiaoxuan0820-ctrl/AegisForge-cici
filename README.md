@@ -1,11 +1,11 @@
-# 🦞 CiCi — 闲置手机变身 AI 助手
+# 🦞 CiCi — 旧手机是最便宜的 AI 硬件
 
 [![Build CiCi APK](https://github.com/xiaoxuan0820-ctrl/AegisForge/actions/workflows/build-cici.yml/badge.svg)](https://github.com/xiaoxuan0820-ctrl/AegisForge/actions/workflows/build-cici.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-**CiCi** 是一款开源的 Android AI 自动化助手。把闲置旧手机变成 24 小时在线的智能管家，通过无障碍服务操控手机，支持钉钉/飞书/QQ/Discord/Telegram 多通道远程控制。
+> 一台旧手机 + 一个开源 APK + 一行 LLM Key = 24 小时在线的私人 AI 管家。**零元成本。**
 
-> “淘汰的手机不是废铁，是你抽屉里最便宜的 AI 硬件。” 🔱
+**CiCi** 将闲置安卓手机变成 AI 助手。通过无障碍服务操控屏幕，用钉钉/飞书/QQ/Discord/Telegram 任一通道远程指挥。自动打卡、定时签到、消息秒回 — 把吃灰的硬件变成最便宜的生产力。
 
 ## ✨ 核心能力
 
