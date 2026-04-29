@@ -24,19 +24,19 @@ enum class Persona(
 
         fun getActive(): Persona {
             val id = KVUtils.getString(KEY_ACTIVE_PERSONA, GEEK.id)
-            return entries.find { it.id == id } ?: GEEK
+            return values().find { it.id == id } ?: GEEK
         }
 
         fun setActive(persona: Persona) {
             KVUtils.putString(KEY_ACTIVE_PERSONA, persona.id)
         }
 
-        fun getById(id: String): Persona? = entries.find { it.id == id }
+        fun getById(id: String): Persona? = values().find { it.id == id }
 
         fun formatList(): String {
             val sb = StringBuilder("【人格列表】\n")
             val active = getActive()
-            entries.forEach { p ->
+            values().forEach { p ->
                 val marker = if (p == active) " ✅" else ""
                 sb.append("${p.icon} ${p.name}$marker\n")
                 sb.append("  ${p.description}\n")

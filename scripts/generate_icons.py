@@ -1,5 +1,5 @@
-"""Generate AegisPhone launcher icons (pure Python, no dependencies)
-Design: Dark navy shield with gold "A" crest — clean & professional."""
+"""Generate CiCi launcher icons (pure Python, no dependencies)
+Design: Dark navy shield with gold "C" crest — clean & professional."""
 
 import struct
 import zlib
@@ -38,12 +38,14 @@ def make_png(width, height):
             inside = dist * cx < shield_radius
 
             if inside:
-                # Gold crest area (central A shape)
+                # Gold crest area (central C shape — ring open on right)
                 nx, ny = dx / cx, dy / cy
-                # A-shape detection
-                a_left = (ny < -0.1 and nx > -0.25 + 0.5 * (ny + 0.5) and nx < 0.25 - 0.5 * (ny + 0.5)) or \
-                         (ny >= -0.1 and nx >= -0.08 + 0.35 * (ny + 0.5) and nx <= 0.08 - 0.35 * (ny + 0.5))
-                if a_left:
+                dist = math.sqrt(nx*nx + ny*ny)
+                angle = math.atan2(ny, nx)  # 0=right, ±π=left
+                inner_r, outer_r = 0.28, 0.52
+                in_ring = inner_r < dist < outer_r
+                is_gap = abs(angle) < 0.55  # ~30° opening on right
+                if in_ring and not is_gap:
                     raw += struct.pack("BBB", 255, 215, 50)  # Gold
                 else:
                     raw += struct.pack("BBB", 15, 15, 46)  # Dark navy
@@ -56,7 +58,7 @@ def make_png(width, height):
 
 
 def make_shield_foreground():
-    """Return vector XML for the shield + A foreground"""
+    """Return vector XML for the shield + C foreground"""
     return (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<vector xmlns:android="http://schemas.android.com/apk/res/android"\n'
@@ -74,20 +76,19 @@ def make_shield_foreground():
         'M54,16L20,32v20c0,19 13,34 34,39'
         'c21,-5 34,-20 34,-39V32L54,16Z'
         '"/>\n'
-        # Gold A letter (crest)
+        # Gold C letter (crest)
         '    <path android:fillColor="#FFD700"\n'
         '        android:pathData="'
-        'M54,36L40,72h8l3,-8h6l3,8h8L54,36Z'
+        'M54,26'
+        'A28,28 0 1,0 54,82'
+        'L54,74'
+        'A20,20 0 1,1 54,34'
+        'Z'
         '"/>\n'
-        # A crossbar
-        '    <path android:fillColor="#FFD700"\n'
-        '        android:pathData="'
-        'M46,58h16v3H46Z'
-        '"/>\n'
-        # Small accent diamond at center
+        # Inner accent dot
         '    <path android:fillColor="#FFFFFF"\n'
         '        android:pathData="'
-        'M54,48l-3,3l3,3l3,-3Z'
+        'M54,50 A4,4 0 1,0 54,58 A4,4 0 1,0 54,50 Z'
         '"/>\n'
         '</vector>\n'
     )
@@ -152,8 +153,8 @@ def main():
             '</adaptive-icon>\n'
         )
 
-    print("  🔱 AegisPhone icons regenerated!")
-    print("    - Shield + gold A crest design")
+    print("  🎀 CiCi icons regenerated!")
+    print("    - Shield + gold C crest design")
     print("    - Adaptive icon (v26+) + PNG fallback (pre-v26)")
 
 

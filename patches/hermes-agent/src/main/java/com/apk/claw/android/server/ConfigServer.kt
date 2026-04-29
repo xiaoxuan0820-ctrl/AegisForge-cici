@@ -615,7 +615,7 @@ loadAll();
             addProperty("description", active.description)
             addProperty("icon", active.icon)
             val list = JsonArray()
-            Persona.entries.forEach { p ->
+            Persona.values().forEach { p ->
                 list.add(JsonObject().apply {
                     addProperty("id", p.id)
                     addProperty("name", p.name)

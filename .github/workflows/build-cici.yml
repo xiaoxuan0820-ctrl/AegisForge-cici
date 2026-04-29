@@ -160,7 +160,9 @@ jobs:
 
       - name: Build Debug APK
         working-directory: hermes-android
-        run: ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g
+        run: |
+          ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g 2>&1 | tail -100
+          exit ${PIPESTATUS[0]}
 
       - name: Upload CiCi APK
         uses: actions/upload-artifact@v4

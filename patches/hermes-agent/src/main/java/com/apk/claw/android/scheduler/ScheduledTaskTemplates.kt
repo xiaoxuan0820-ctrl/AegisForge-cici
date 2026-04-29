@@ -188,7 +188,7 @@ object ScheduledTaskTemplates {
     fun formatTemplateList(): String {
         val sb = StringBuilder("【任务模板列表】\n")
 
-        for (category in TaskTemplate.Category.entries) {
+        for (category in TaskTemplate.Category.values()) {
             if (category == TaskTemplate.Category.CUSTOM) continue
             val templates = getByCategory(category)
             if (templates.isEmpty()) continue
