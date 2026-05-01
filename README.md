@@ -143,14 +143,14 @@ Web 配置页面运行在 `9527` 端口，同时提供 REST API：
 
 ```bash
 # 克隆上游
-git clone https://github.com/rfdiosuao/Hermes-Agent-phone hermes-android
+git clone https://github.com/xiaoxuan0820-ctrl/hermes-agent
+cd hermes-agent/android
 
 # 应用 18 个 patch
-cp patches/hermes-agent/src/main/java/com/apk/claw/android/**/*.kt \
-   hermes-android/app/src/main/java/com/apk/claw/android/
+cp -r /path/to/AegisForge/patches/hermes-agent/src/main/java/com/apk/claw/android/**/*.kt \
+   app/src/main/java/com/apk/claw/android/
 
 # 构建
-cd hermes-android
 ./gradlew assembleDebug
 ```
 
@@ -174,7 +174,7 @@ project/
 
 ### 补丁说明
 
-18 个文件覆盖了上游 [Hermes-Agent-phone](https://github.com/rfdiosuao/Hermes-Agent-phone) 的对应文件，主要增强：
+18 个文件覆盖了上游 [hermes-agent/android](https://github.com/xiaoxuan0820-ctrl/hermes-agent) 的对应文件，主要增强：
 
 | # | 文件 | 增强内容 |
 |---|------|----------|

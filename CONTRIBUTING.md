@@ -34,7 +34,7 @@ git commit -m "feat: 你的功能描述"
 
 ### 📝 补丁开发规范
 
-本项目通过 patch 文件增强上游 Hermes-Agent-Phone。每个 patch 文件：
+本项目通过 patch 文件增强上游 [hermes-agent](https://github.com/xiaoxuan0820-ctrl/hermes-agent) (android 目录)。每个 patch 文件：
 - 必须能**完整替换**上游同路径文件
 - 保持与上游一致的包名和类名
 - 新增类放在对应业务包下（如 memory、skill、scheduler）
@@ -44,14 +44,14 @@ git commit -m "feat: 你的功能描述"
 
 ```bash
 # 克隆上游
-git clone https://github.com/rfdiosuao/Hermes-Agent-phone hermes-android
+git clone https://github.com/xiaoxuan0820-ctrl/hermes-agent
+cd hermes-agent/android
 
 # 应用 patch
-cp -r patches/hermes-agent/src/main/java/com/apk/claw/android/* \
-     hermes-android/app/src/main/java/com/apk/claw/android/
+cp -r /path/to/AegisForge/patches/hermes-agent/src/main/java/com/apk/claw/android/* \
+     app/src/main/java/com/apk/claw/android/
 
 # 构建
-cd hermes-android
 ./gradlew assembleDebug
 
 # 安装测试
